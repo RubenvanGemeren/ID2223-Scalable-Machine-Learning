@@ -55,4 +55,3 @@ jobs:
           skip_checkout: true
 
           push_options: "--force"
-          
