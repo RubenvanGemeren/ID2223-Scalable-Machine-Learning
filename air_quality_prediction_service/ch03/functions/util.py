@@ -362,13 +362,30 @@ def check_file_path(file_path):
         print(f"File successfully found at the path: {file_path}")
 
 
-def backfill_predictions_for_monitoring(weather_fg, air_quality_df, monitor_fg, model):
-    features_df = weather_fg.read()
-    features_df = features_df.sort_values(by=["date"], ascending=True)
-    features_df = features_df.tail(10)
+def backfill_predictions_for_monitoring(
+    weather_fg, air_quality_df, monitor_fg, model, today
+):
+
+    features_df = (
+        weather_fg.filter(weather_fg.date <= today)
+        .read()
+        .sort_values(by="date")
+        .tail(10)
+        .merge(
+            air_quality_df[
+                ["date", "pm25_1_day_before", "pm25_2_day_before", "pm25_3_day_before"]
+            ],
+            on="date",
+            how="left",
+        )
+    )
+
     features_df["predicted_pm25"] = model.predict(
         features_df[
             [
+                "pm25_1_day_before",
+                "pm25_2_day_before",
+                "pm25_3_day_before",
                 "temperature_2m_mean",
                 "precipitation_sum",
                 "wind_speed_10m_max",
