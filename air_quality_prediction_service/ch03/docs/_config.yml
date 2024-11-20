@@ -1,2 +1,4 @@
 exlude:
   - assets/css/style.scss
+plugins: []
+theme: null
