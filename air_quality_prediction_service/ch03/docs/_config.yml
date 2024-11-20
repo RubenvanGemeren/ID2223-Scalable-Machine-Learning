@@ -1,4 +1,0 @@
-exlude:
-  - air_quality_model/assets/css/style.scss
-plugins: []
-theme: null
