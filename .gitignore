@@ -163,3 +163,4 @@ cython_debug/
 
 
 air_quality_prediction_service/ch03/data/*
+lab2_finetuning/outputs/*
