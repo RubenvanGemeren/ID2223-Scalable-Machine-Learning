@@ -24,3 +24,38 @@ The project consists of 4 notebooks:
 # Published page
 
 The final published page can be found here: https://rubenvangemeren.github.io/ID2223-Scalable-Machine-Learning/
+
+
+# Lab 2 - Fine tuning using Unsloth
+
+
+### Checkpointing
+
+We add checkpointing to the training by passing the "output_dir" parameter for the trainer. We checkpoint every 100 steps and only keep the latest checkpoint for storage efficiency.
+
+### Fine tune model
+
+The model has been trained approximately 1/2 an epoch (5600 steps) on the FineTome dataset. It has been trained both on Google Colab free and one of our personal GPUs.
+
+### UI for model interaction
+
+We have created a UI that lets users input ingredients and corresponding quantites (g). The model then composes a meal using the ingredients and gives the user the instructions of how to make the meal.
+
+The UI is available: (https://huggingface.co/spaces/ID2223JR/lab2)
+
+### Improvements
+
+- Tuning hyperparameters:
+1. Could add dropout > 0 to prevent overfitting. According to Unsloth documentation they only support dropout=0 for now, as they have optimized the dropout internally somehow.
+2. The "r" parameter, which is the rank of the low-rank decomposition for factorizing weight matrices, could also be tuned. A higher value would retain more information but require more computational resources. A lower value would mean fewer parameters but more efficient training, and if too small a potential risk for performance drop.
+3. The "lora_alpha" parameter, which is the scaling factor for the low-rank matrices' contribution could also be tuned. Higher value incerases the influence of the matrices', speeds up convergence but increases a risk for overfitting. Lower value decrease influence, meaning it would be requried to train the model for more steps.
+
+We havn't experimented with these features, as we feel we didn't have the computational resources to do so. Instead we tried fine tuning using another dataset.
+
+- Identifying new data sources to train a better model for our purpose:
+1. We have identified a dataset perfect for the use of our model: (https://huggingface.co/datasets/mbien/recipe_nlg)
+2. This dataset contains over 2 million recipes and directions for cooking the meals.
+3. We created a second notebook that downloads this dataset, then parses it into the correct format (instruction-response format) to be able to use it for fine tuning the model further.
+4. We weren't able to complete a full epoch of training, since the dataset is huge. In the end, we managed to run it 30.000 steps (10% of an epoch for that dataset).
+
+
