@@ -15,6 +15,47 @@ import hopsworks
 import hsfs
 from pathlib import Path
 
+date_to_gameweek = {
+        1: date(2024, 8, 16),
+        2: date(2024, 8, 24),
+        3: date(2024, 8, 31),
+        4: date(2024, 9, 14),
+        5: date(2024, 9, 21),
+        6: date(2024, 9, 28),
+        7: date(2024, 10, 5),
+        8: date(2024, 10, 19),
+        9: date(2024, 10, 25),
+        10: date(2024, 11, 2),
+        11: date(2024, 11, 9),
+        12: date(2024, 11, 23),
+        13: date(2024, 11, 29),
+        14: date(2024, 12, 3),
+        15: date(2024, 12, 7),
+        16: date(2024, 12, 14),
+        17: date(2024, 12, 21),
+        18: date(2024, 12, 26),
+        19: date(2024, 12, 29),
+        20: date(2025, 1, 4),
+        21: date(2025, 1, 14),
+        22: date(2025, 1, 18),
+        23: date(2025, 1, 25),
+        24: date(2025, 2, 1),
+        25: date(2025, 2, 14),
+        26: date(2025, 2, 21),
+        27: date(2025, 2, 25),
+        28: date(2025, 3, 8),
+        29: date(2025, 3, 15),
+        30: date(2025, 4, 1),
+        31: date(2025, 4, 5),
+        32: date(2025, 4, 12),
+        33: date(2025, 4, 19),
+        34: date(2025, 4, 26),
+        35: date(2025, 5, 3),
+        36: date(2025, 5, 10),
+        37: date(2025, 5, 18),
+        38: date(2025, 5, 25),
+}
+
 def plot_player_score_forecast(
     graph_name: str, df: pd.DataFrame, file_path: str, hindcast=False
 ):
@@ -47,51 +88,20 @@ def plot_player_score_forecast(
 
     ax.grid(True, which='both', linestyle='--', linewidth=0.5)
 
-    # colors = ["green", "yellow", "orange", "red", "purple", "darkred"]
-    # labels = [
-    #     "Good",
-    #     "Moderate",
-    #     "Unhealthy for Some",
-    #     "Unhealthy",
-    #     "Very Unhealthy",
-    #     "Hazardous",
-    # ]
-    # ranges = [(0, 49), (50, 99), (100, 149), (150, 199), (200, 299), (300, 500)]
-    # for color, (start, end) in zip(colors, ranges):
-    #     ax.axhspan(start, end, color=color, alpha=0.3)
-
-    # Add a legend for the different Air Quality Categories
-    # patches = [
-    #     Patch(color=colors[i], label=f"{labels[i]}: {ranges[i][0]}-{ranges[i][1]}")
-    #     for i in range(len(colors))
-    # ]
-    # legend1 = ax.legend(
-    #     handles=patches,
-    #     loc="upper right",
-    #     title="Air Quality Categories",
-    #     fontsize="x-small",
-    # )
-
-    # Aim for ~10 annotated values on x-axis, will work for both forecasts ans hindcasts
-    # if len(df.index) > 11:
-    #     every_x_tick = len(df.index) / 10
-    #     ax.xaxis.set_major_locator(MultipleLocator(every_x_tick))
-
     plt.xticks(rotation=45)
 
     if hindcast == True:
         ax.plot(
-            day,
             df["total_points"],
             label="Actual Score",
             color="black",
             linewidth=2,
-            marker="^",
-            markersize=5,
-            markerfacecolor="grey",
+            linestyle='None',
+            marker="o",
+            markersize=3,
         )
-        legend2 = ax.legend(loc="upper left", fontsize="x-small")
-        ax.add_artist(legend1)
+        # legend2 = ax.legend(loc="upper left", fontsize="x-small")
+        # ax.add_artist(legend1)
 
     # Ensure everything is laid out neatly
     plt.tight_layout()
@@ -169,3 +179,28 @@ def check_file_path(file_path):
         print(f"Error. File not found at the path: {file_path} ")
     else:
         print(f"File successfully found at the path: {file_path}")
+
+def get_date_from_gameweek(gameweek):
+    try:
+        return date_to_gameweek[gameweek]
+    except KeyError:
+        return "Invalid gameweek number"
+
+
+def get_gameweek_from_date(date):
+    try:
+        date = pd.to_datetime(date)
+    except ValueError:
+        return "Invalid date format"
+
+    first_date = pd.to_datetime(next(iter(date_to_gameweek.items())))
+    last_date = pd.to_datetime(next(iter(reversed(date_to_gameweek.items()))))
+
+    # return first_date[1], last_date[1]
+
+    if date < first_date[1] or date > last_date[1]:
+        return "Date is not within the season range"
+
+    for i in range(1, len(date_to_gameweek)):
+        if pd.to_datetime(date_to_gameweek[i]) > date:
+            return i-1
