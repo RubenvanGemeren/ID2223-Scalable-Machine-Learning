@@ -165,6 +165,7 @@ cython_debug/
 air_quality_prediction_service/ch03/data/*
 lab2_finetuning/outputs/*
 
+fpl_project/player_score_model/*
 
 lab2_finetuning/recipe/data/*
 lab2_finetuning/recipe_outputs/*
