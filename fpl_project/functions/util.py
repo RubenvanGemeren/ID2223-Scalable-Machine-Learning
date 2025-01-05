@@ -110,7 +110,8 @@ def get_player_info(player_id):
 
         for player in data["elements"]:
             if player["id"] == player_id:
-                player_data["name"] = player["web_name"]
+                player_data["firstname"] = player["first_name"]
+                player_data["lastname"] = player["second_name"]
                 player_data["team"] = get_team_name(player["team"], data["teams"])
                 player_data["position"] = get_position(player["element_type"], data["element_types"])
 
