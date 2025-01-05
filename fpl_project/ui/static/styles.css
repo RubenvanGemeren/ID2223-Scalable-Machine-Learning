@@ -1,0 +1,48 @@
+/* General table styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.inner-table {
+  width: auto; /* Auto width to make it smaller */
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+  font-size: 12px; /* Smaller font size */
+  margin: 0 auto; /* Center the table horizontally */
+}
+
+.inner-table th,
+.inner-table td {
+  border: 1px solid #ccc;
+  width: 100px; /* Fixed width */
+  padding: 0px 0px; /* Smaller padding */
+  text-align: center;
+}
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pagination .btn {
+  padding: 10px;
+  margin: 0 5px;
+  text-decoration: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+.pagination .btn:hover {
+  background-color: #0056b3;
+}

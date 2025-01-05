@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FPL Player Points</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>FPL Player Points</h1>
+
+      <!-- Search and Filter Form -->
+      <div>
+        <form
+          hx-post="/api/players"
+          hx-target="#player-table tbody"
+          hx-swap="innerHTML"
+          hx-indicator="#spinner"
+        >
+          <input
+            class="input py-5 px-5 rounded-full"
+            type="text"
+            name="player"
+            placeholder="Search Player"
+          />
+          <select
+            name="position"
+            id="position-select"
+            class="py-5 px-5 rounded-full"
+          >
+            <option value="">All</option>
+            <option value="ST">Striker</option>
+            <option value="MID">Midfielder</option>
+            <option value="DEF">Defender</option>
+            <option value="GK">Goalkeeper</option>
+          </select>
+          <button class="searchbutton">Search</button>
+
+          <!-- Loading spinner -->
+          <img
+            src="{{ url_for('static', filename='images/loading.gif') }}"
+            id="spinner"
+            alt="Loading..."
+            class="htmx-indicator size-20 justify-center float-end"
+          />
+        </form>
+      </div>
+
+      <!-- Player Table -->
+      <table id="player-table" class="table">
+        <thead>
+          <tr>
+            <th>Player Name</th>
+            <th>Position</th>
+            <th>Club</th>
+            <th>Total Points</th>
+            <th>Latest Performances</th>
+            <th>Next Gameweek Prediction</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for player in players %}
+          <tr>
+            <td>{{ player.firstname }} {{ player.lastname }}</td>
+            <td>{{ player.position }}</td>
+            <td>{{ player.club }}</td>
+            <td>{{ player.points }}</td>
+            <td>
+              <table class="inner-table">
+                <tr>
+                  <th>Gameweek</th>
+                  <th>Points</th>
+                  <th>Predicted Points</th>
+                </tr>
+                {% for gw in player['5latestGws'] %}
+                <tr>
+                  <td>{{ gw['gameweek'] }}</td>
+                  <td>{{ gw['total_points'] }}</td>
+                  <td>{{ gw['predicted_points'] }}</td>
+                </tr>
+                {% endfor %}
+              </table>
+            </td>
+            <td>{{ player.nextGwPrediction }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <!-- Pagination Controls -->
+      <div class="pagination">{{ pagination | safe }}</div>
+    </div>
+  </body>
+</html>
