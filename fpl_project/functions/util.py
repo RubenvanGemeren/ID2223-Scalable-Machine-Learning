@@ -90,25 +90,45 @@ def plot_player_score_forecast(
 
     plt.xticks(rotation=45)
 
-    if hindcast == True:
-        ax.plot(
-            df["total_points"],
-            label="Actual Score",
-            color="black",
-            linewidth=2,
-            linestyle='None',
-            marker="o",
-            markersize=3,
-        )
-        # legend2 = ax.legend(loc="upper left", fontsize="x-small")
-        # ax.add_artist(legend1)
-
     # Ensure everything is laid out neatly
     plt.tight_layout()
 
     # # Save the figure, overwriting any existing file with the same name
     plt.savefig(file_path)
     return plt
+
+def get_player_info(player_id):
+    # Get static bootstrap data from fpl api
+    bootstrap_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
+
+    player_data = {}
+
+    try:
+        response = requests.get(bootstrap_url)
+        response.raise_for_status()
+        data = response.json()
+
+        for player in data["elements"]:
+            if player["id"] == player_id:
+                player_data["name"] = player["web_name"]
+                player_data["team"] = get_team_name(player["team"], data["teams"])
+                player_data["position"] = get_position(player["element_type"], data["element_types"])
+
+        return player_data
+
+    except requests.exceptions.HTTPError as err:
+        print(err)
+        return None
+
+def get_team_name(team_id, teams):
+    for team in teams:
+        if team["code"] == team_id:
+            return team["name"]
+
+def get_position(position_id, positions):
+    for position in positions:
+        if position["id"] == position_id:
+            return position["singular_name"]
 
 
 def delete_feature_groups(fs, name):
