@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import hopsworks
 import os
+import json
+import math
 
 app = Flask(__name__)
 
@@ -15,6 +17,16 @@ project = hopsworks.login()
 fs = project.get_feature_store()
 
 players = fs.get_feature_group("fpl_predictions")
+
+player_df = players.read()
+
+player_data = player_df.to_json(orient="records")
+
+players = json.loads(player_data)
+
+for player in players:
+    if player["predicted_score"] != None:
+        player["predicted_score"] = round(player["predicted_score"])
 
 # Mock data (replace with actual database query or file read)
 sample_players = [
@@ -95,11 +107,15 @@ sample_players = [
     },
 ]
 
+@app.route("/test")
+def test():
+    return players
+
 
 @app.route("/")
 def index():
     """Render the main page."""
-    return render_template("players.html", players=sample_players)
+    return render_template("players.html", players=players)
 
 
 @app.route("/api/players", methods=["POST", "GET"])
@@ -142,14 +158,14 @@ def get_players():
                         <th>Predicted Points</th>
                     </tr>
         """
-        for gw in player["5latestGws"]:
-            player_rows += f"""
-            <tr>
-                <td>{gw['gameweek']}</td>
-                <td>{gw['total_points']}</td>
-                <td>{gw['predicted_points']}</td>
-            </tr>
-            """
+        # for gw in player["5latestGws"]:
+        #     player_rows += f"""
+        #     <tr>
+        #         <td>{gw['gameweek']}</td>
+        #         <td>{gw['total_points']}</td>
+        #         <td>{gw['predicted_points']}</td>
+        #     </tr>
+        #     """
         player_rows += f"""</table></td>
         <td>{player["nextGwPrediction"]}</td</tr>"""
 
