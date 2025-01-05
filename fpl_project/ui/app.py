@@ -131,8 +131,8 @@ def get_players():
         player
         for player in sample_players
         if (
-            player_name in player["firstname"].lower()
-            or player_name in player["lastname"].lower()
+            player_name in player["first_name"].lower()
+            or player_name in player["second_name"].lower()
         )
         and (not position or position == player["position"])
     ]
@@ -146,7 +146,7 @@ def get_players():
     for player in filtered_players:
         player_rows += f"""
         <tr>
-            <td>{player['firstname']} {player['lastname']}</td>
+            <td>{player['first_name']} {player['second_name']}</td>
             <td>{player['position']}</td>
             <td>{player['club']}</td>
             <td>{player['points']}</td>
