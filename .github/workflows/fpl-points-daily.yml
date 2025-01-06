@@ -1,4 +1,4 @@
-name: air-quality-daily
+name: fpl-points-daily
 
 on:
   workflow_dispatch:
