@@ -92,6 +92,6 @@ We have followed the same strucure as in lab1, with 4 notebooks:
 
 ### Results
 
-### Running the code
+To display the results, a simple UI has been created and deployed on HuggingFace (https://huggingface.co/spaces/ID2223JR/fpl_app). The UI presents all players and the predicted score for the upcoming gameweek in a table with columns player name, team, position, total points, latest performances, predicted points. The user can search for a specific player and sort the table by any of the columns.
 
-To run the code, you need to have access to Hopsworks. You can create a free account at https://app.hopsworks.ai/. Once you have access to Hopsworks, you can create a new project and upload the notebooks to the project. You can then run the notebooks in the following order:
+### Running the code

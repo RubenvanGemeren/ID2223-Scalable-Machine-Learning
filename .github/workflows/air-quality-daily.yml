@@ -2,6 +2,8 @@ name: air-quality-daily
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 10 * * *"
 
 jobs:
   schedule_pipelines:
@@ -21,12 +23,14 @@ jobs:
           python-version: "3.10"
           cache: "pip"
       - name: install python packages
+        if: github.event_name != 'workflow_dispatch' && github.event_name != 'schedule'
         run: |
           cd air_quality_prediction_service/ch03
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: execute python workflows from bash script
+        if: github.event_name != 'workflow_dispatch' && github.event_name != 'schedule'
         env:
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
         run: |
@@ -53,3 +57,12 @@ jobs:
           skip_checkout: true
 
           push_options: "--force"
+
+      - name: run fpl predictions
+        env:
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+        run: |
+          cd fpl_project
+          jupyter nbconvert --to notebook --execute 2_fpl_feature_pipeline.py
+          jupyter nbconvert --to notebook --execute 3_fpl_model_training.py
+          jupyter nbconvert --to notebook --execute 4_fpl_batch_inference.py

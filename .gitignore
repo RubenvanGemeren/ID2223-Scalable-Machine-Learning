@@ -166,6 +166,8 @@ air_quality_prediction_service/ch03/data/*
 lab2_finetuning/outputs/*
 
 fpl_project/player_score_model/*
+fpl_project/fpl_app/*
+fpl_project/fpl_app
 
 lab2_finetuning/recipe/data/*
 lab2_finetuning/recipe_outputs/*
