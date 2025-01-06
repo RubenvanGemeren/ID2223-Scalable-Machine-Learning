@@ -17,6 +17,9 @@ jobs:
       - name: checkout repo content
         uses: actions/checkout@v4
 
+      - name: Create pip cache directory
+        run: mkdir -p /home/runner/.cache/pip
+
       - name: setup python
         uses: actions/setup-python@v5
         with:
