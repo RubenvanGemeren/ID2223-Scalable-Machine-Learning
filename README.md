@@ -63,3 +63,35 @@ We havn't experimented with these features, as we feel we didn't have the comput
 2. This dataset contains over 2 million recipes and directions for cooking the meals.
 3. We created a second notebook that downloads this dataset, then parses it into the correct format (instruction-response format) to be able to use it for fine tuning the model further.
 4. We weren't able to complete a full epoch of training, since the dataset is huge. In the end, we managed to run it 30.000 steps (10% of an epoch for that dataset).
+
+# Project - Fantasy Premier League Points Predictor
+
+### Introduction
+
+The goal of this project is to predict the points that Fantasy Premier League (FPL) players will score
+in the upcoming game week. This will help FPL managers make informed decisions about transfers,
+captaincy, and team selection. The data sources will include the Fantasy Premier League’s official
+API, and possibly also a public GitHub repository with cleaned data from the FPL API, to get
+player statistics, fixture data, and historical performance metrics.
+
+### Dataset
+
+The data used for this project is fetched from the [Fantasy Premier League API](https://fantasy.premierleague.com/api) dataset. The API has endpoints containing information about the players, teams, and matches in the English Premier League. The dataset is updated daily and contains information about the players' performance in the matches, such as goals scored, assists, clean sheets, etc. The dataset is used to predict the points scored by the players in the upcoming matches.
+
+### Method
+
+We have followed the same strucure as in lab1, with 4 notebooks:
+
+1. Backfill – This notebook is responsible for creating the historical data that will be used to train the model. The data is cleaned and prepared to be stored in Hopsworks as feature groups. This notebook is only run once to create an up-to-date backlog; future measurements will be processed and stored daily.
+
+2. Feature pipeline – This notebook is responsible for keeping our data up to date. This is done by running this particular notebook daily using GitHub Actions. The API keys created during the backfill are retrieved from Hopsworks and queried to get the latest data from our sources, updating the feature groups in the process.
+
+3. Training pipeline – After creating and updating the datastore, we can build our predictor model. This is done by creating a Hopsworks Feature View and splitting our data into training and test data. The model used is called Extreme Gradient Boosting, a fast and flexible model great for achieving high predictive accuracy. After creating the model, it is stored in Hopsworks so it can be used later.
+
+4. Batch inference – Finally, we use the created model and the data we have prepared to make actual predictions. We make predictions for the next gameweek, and update the predictions made for the latest gameweek by adding the actualy points scored by the players.
+
+### Results
+
+To display the results, a simple UI has been created and deployed on HuggingFace (https://huggingface.co/spaces/ID2223JR/fpl_app). The UI presents all players and the predicted score for the upcoming gameweek in a table with columns player name, team, position, total points, latest performances, predicted points. The user can search for a specific player and sort the table by any of the columns.
+
+### Running the code
