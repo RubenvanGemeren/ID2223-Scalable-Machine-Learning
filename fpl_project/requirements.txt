@@ -1,13 +1,14 @@
 # Feature store and model registry
-hopsworks==4.1.4
+jupyterlab
+hopsworks[python]
 
 # Be more efficient when making REST (Http) requests
-requests-cache==1.2.0
-retry-requests==2.0.0
+requests-cache
+retry-requests
 
 # ML framework libraries
-xgboost==2.0.3
-scikit-learn==1.4.1.post1
+xgboost
+scikit-learn
 
 # Plot charts
-matplotlib==3.8.3
+matplotlib
