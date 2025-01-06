@@ -1,5 +1,5 @@
 # Feature store and model registry
-hopsworks
+hopsworks==4.1.4
 
 # Be more efficient when making REST (Http) requests
 requests-cache==1.2.0
