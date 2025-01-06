@@ -39,6 +39,10 @@ jobs:
         run: |
           python -m pip install pyarrow
 
+      - name: install hsfs
+        run: |
+          python -m pip install hsfs
+
       - name: execute python workflows from bash script
         env:
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
