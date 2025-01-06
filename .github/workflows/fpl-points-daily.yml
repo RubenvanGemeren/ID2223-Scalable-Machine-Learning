@@ -1,4 +1,4 @@
-name: fpl-points-daily-test
+name: fpl-points-daily
 
 on:
   workflow_dispatch:
