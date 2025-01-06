@@ -26,14 +26,12 @@ jobs:
           python-version: "3.10"
           cache: "pip"
       - name: install python packages
-        if: github.event_name != 'workflow_dispatch' && github.event_name != 'schedule'
         run: |
           cd fpl_project
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: execute python workflows from bash script
-        if: github.event_name != 'workflow_dispatch' && github.event_name != 'schedule'
         env:
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
         run: |
