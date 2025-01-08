@@ -3,7 +3,8 @@ name: Restart Hugging Face Space
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/30 * * * *' # Runs every 30 minutes
+    # Run every day at 10:00 UTC
+    - cron: "0 10 * * *"
 
 jobs:
   restart-space:
