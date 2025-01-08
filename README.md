@@ -1,8 +1,10 @@
 # ID2223-Scalable-Machine-Learning
 
+# Lab 1 - Air Quality Prediction Service
+
 This assignment implements a air quality prediction service for the centre of Rotterdam using publicly available sensor and weather data using https://aqicn.org/api/ and https://open-meteo.com/. Using [Hopsworks](https://app.hopsworks.ai) to orchestrate and manage feature groups and prediction models. A Extreme boosted gradient model is used for predictions. The first image shows the predicted air quality for the next 7 days ([see image one](air_quality_prediction_service/ch03/docs/air_quality_model/assets/images/pm25_forecast.png)). The second image shows the predicted air quality with the actual air quality observed that day ([see image two](air_quality_prediction_service/ch03/docs/air_quality_model/assets/images/pm25_hindcast.png)).
 
-The project consists of 4 notebooks:
+Lab 1 consists of 4 notebooks:
 
 ## Backfill
 
@@ -66,32 +68,62 @@ We havn't experimented with these features, as we feel we didn't have the comput
 
 # Project - Fantasy Premier League Points Predictor
 
-### Introduction
+## Introduction
+The goal of this project is to predict the points that Fantasy Premier League (FPL) players will score in the upcoming game week. This will help FPL managers make informed decisions about transfers, captaincy, and team selection. The data sources include the Fantasy Premier League’s official API, which provides player statistics, fixture data, and historical performance metrics. The model is built using a backfill of all the data in a season and utilizes current live data to predict points.
 
-The goal of this project is to predict the points that Fantasy Premier League (FPL) players will score
-in the upcoming game week. This will help FPL managers make informed decisions about transfers,
-captaincy, and team selection. The data sources will include the Fantasy Premier League’s official
-API, and possibly also a public GitHub repository with cleaned data from the FPL API, to get
-player statistics, fixture data, and historical performance metrics.
+## Problem Description
+Predicting player performance, both in real-life and fantasy scenarios, is highly beneficial. As of the 2024 season, the estimated value of the first-place prize in FPL is approximately €13,500. The world of football is increasingly adopting artificial intelligence, with more than a billion euros being invested in developing home-grown talent. Predictive services are becoming essential.
 
-### Dataset
+The biggest challenge when predicting player performance is the inherent uncertainty in professional sports. Player performance can vary dramatically due to injuries, confidence, personal challenges, and more. In an ideal world, a prediction model would incorporate data from multiple sources to create a comprehensive context for player performance. While this is a school project with limited time and resources, we aim to achieve the most accurate predictions possible within these constraints.
 
-The data used for this project is fetched from the [Fantasy Premier League API](https://fantasy.premierleague.com/api) dataset. The API has endpoints containing information about the players, teams, and matches in the English Premier League. The dataset is updated daily and contains information about the players' performance in the matches, such as goals scored, assists, clean sheets, etc. The dataset is used to predict the points scored by the players in the upcoming matches.
+## Tools
+This project is implemented in Python, leveraging PyTorch, Scikit-learn, and pandas for data processing and feature engineering. Hopsworks is used for storing features and predictions. For deployment, we use [Hugging Face Spaces](https://huggingface.co/spaces/ID2223JR/fpl_app).
 
-### Method
+## Data
+The data for this project is fetched from the [Fantasy Premier League API](https://fantasy.premierleague.com/api). This API provides information about players, teams, and matches in the English Premier League. The dataset is updated daily and contains metrics such as goals scored, assists, clean sheets, and other performance indicators. These metrics are used to predict the points players will receive in a game week. Points are determined by various actions, such as playtime, goals (differentiated by position), avoiding penalties, and more. Negative points can also be awarded for yellow or red cards.
 
-We have followed the same strucure as in lab1, with 4 notebooks:
+Additionally, a static dataset provides supplementary information such as team names and player positions. This dataset is not part of the prediction pipeline but aids in feature interpretation.
 
-1. Backfill – This notebook is responsible for creating the historical data that will be used to train the model. The data is cleaned and prepared to be stored in Hopsworks as feature groups. This notebook is only run once to create an up-to-date backlog; future measurements will be processed and stored daily.
+## Methodology and Algorithm
+The pipeline structure is inspired by the first lab assignment, which involved a serverless ML pipeline to predict air quality values. While the project structure is similar, the implementation diverges significantly.
 
-2. Feature pipeline – This notebook is responsible for keeping our data up to date. This is done by running this particular notebook daily using GitHub Actions. The API keys created during the backfill are retrieved from Hopsworks and queried to get the latest data from our sources, updating the feature groups in the process.
+### 1. Backfill
+The historical data used to train the model is cleaned and prepared for storage in Hopsworks as feature groups. This notebook is run once to create an up-to-date backlog. Future measurements are processed and stored daily. A crucial aspect of feature engineering is shifting the data by one week, which enables predictions.
 
-3. Training pipeline – After creating and updating the datastore, we can build our predictor model. This is done by creating a Hopsworks Feature View and splitting our data into training and test data. The model used is called Extreme Gradient Boosting, a fast and flexible model great for achieving high predictive accuracy. After creating the model, it is stored in Hopsworks so it can be used later.
+### 2. Feature Pipeline
+This notebook updates the dataset daily using GitHub Actions. API keys created during the backfill process are retrieved from Hopsworks and used to fetch the latest data from our sources, updating the feature groups accordingly.
 
-4. Batch inference – Finally, we use the created model and the data we have prepared to make actual predictions. We make predictions for the next gameweek, and update the predictions made for the latest gameweek by adding the actualy points scored by the players.
+### 3. Training Pipeline
+Once the datastore is ready, we build the prediction model. A Hopsworks Feature View is created, and the data is split into training and testing sets. We use Extreme Gradient Boosting (XGBoost), a fast and flexible model well-suited for achieving high predictive accuracy. The trained model is then stored in Hopsworks for later use.
 
-### Results
+### 4. Batch Inference
+Finally, the trained model and prepared data are used to make predictions for the next game week. Predictions are updated for the latest game week by incorporating the actual points scored by players.
 
-To display the results, a simple UI has been created and deployed on HuggingFace (https://huggingface.co/spaces/ID2223JR/fpl_app). The UI presents all players and the predicted score for the upcoming gameweek in a table with columns player name, team, position, total points, latest performances, predicted points. The user can search for a specific player and sort the table by any of the columns.
+![Pipeline Diagram](a414853e7d0a62093a9a681fe7ec1350319da28c.png)
 
-### Running the code
+## Results
+The user interface for this project is hosted on [Hugging Face Spaces](https://huggingface.co/spaces/ID2223JR/fpl_app). It displays all active players, their predicted scores, and their historical scores for comparison. Interestingly, some players receive negative points due to fouls, which is accurately reflected in the predictions.
+
+When comparing the top-rated players predicted by our model with other sources such as the [Premier League Official Site](https://www.premierleague.com/stats/top/players) or [Goal.com](https://www.goal.com/en/lists/premier-league-player-of-the-season-2024-25-power-rankings/blt350cdd828461eaeb), we observe significant similarities.
+
+### Model Evaluation
+The final model achieved the following metrics:
+- **Mean Squared Error (MSE):** 6.15
+- **Root Mean Squared Error (RMSE):** 2.48
+- **R-Squared (ℓ²):** 0.093
+
+An RMSE of 2.48 indicates that predictions will generally fall within 2.48 points of the actual score. Most player points range between -1 and 18, suggesting that the model captures general trends but struggles with finer distinctions among players of similar caliber.
+
+The R-squared value of 0.093 indicates that approximately 9% of the variability in player points is explained by the model, while 91% is due to external factors not captured in the dataset. This underscores the limitations of the features used in the model.
+
+## Discussion
+Predicting player points involves numerous variables, many of which are not included in the dataset. Factors such as injuries, opponent strength, and match context significantly influence performance but are not represented in the provided data.
+
+Our model performs reasonably well given the available data. Improvements would require additional features and more robust datasets. For example, FPL assigns points differently based on player positions (e.g., strikers receive fewer points for goals than defenders). This positional context is not explicitly captured in our data, leading to a more generalized model.
+
+Future enhancements could include experimenting with more advanced models such as LightGBM, CatBoost, or neural networks. However, time constraints prevented their implementation in this project.
+
+## Conclusion
+This project provided valuable insights into building predictive systems. We learned that achieving high accuracy requires extensive and diverse data. While using Hopsworks offered many advantages, it also presented challenges when issues arose.
+
+For future work, we recommend testing additional models and incorporating more data sources to enrich the feature set. There is significant potential for refining the existing pipeline to achieve better results.
