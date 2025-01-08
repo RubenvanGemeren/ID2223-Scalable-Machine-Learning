@@ -168,6 +168,7 @@ lab2_finetuning/outputs/*
 fpl_project/player_score_model/*
 fpl_project/fpl_app/*
 fpl_project/fpl_app
+fpl_project/spaces-scheduler
 
 lab2_finetuning/recipe/data/*
 lab2_finetuning/recipe_outputs/*
