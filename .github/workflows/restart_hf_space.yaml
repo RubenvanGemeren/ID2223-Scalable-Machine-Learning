@@ -24,5 +24,7 @@ jobs:
 
       - name: Restart Hugging Face Space
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python restart_space.py
+          HF_TOKEN: ${{ secrets.HF_KEY }}
+        run:
+          cd fpl_project
+          python restart_space.py
